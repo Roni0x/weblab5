@@ -9,7 +9,7 @@
 <div class="container">
     <h1>Регистрационная анкета</h1>
     
-    <!-- Кнопки входа/выхода -->
+    <!-- Кнопки входа/выхода (показываются только когда форма пуста или пользователь авторизован) -->
     <?php if (!$is_authenticated && empty($values['fio'])): ?>
         <div style="text-align: right; margin-bottom: 20px;">
             <a href="login.php" class="auth-btn auth-btn-login">Войти для редактирования</a>
@@ -22,24 +22,28 @@
         </div>
     <?php endif; ?>
 
-    <!-- Вывод сообщений (ошибки, успех) -->
+    <!-- Вывод сообщений (ошибки, успех, логин/пароль) -->
     <?php if (!empty($messages)): ?>
         <?php foreach ($messages as $msg): ?>
             <?php echo $msg; ?>
         <?php endforeach; ?>
     <?php endif; ?>
 
+    <!-- Форма отправляется на тот же URL (index.php) методом POST -->
     <form action="" method="POST">
         
-        <!-- ===== 1. ПОЛЕ "ФИО" ===== -->
+        <!-- ПОЛЕ "ФИО" -->
         <div class="form-group">
             <label class="required">ФИО</label>
+            <!-- value - подставляем сохранённое значение из Cookies или БД -->
+            <!-- class="error" - если есть ошибка, поле подсвечивается красным -->
+            <!-- htmlspecialchars() - защита от XSS атак -->
             <input type="text" name="fio" 
                    value="<?php echo htmlspecialchars($values['fio'] ?? ''); ?>"
                    class="<?php echo ($errors['fio'] ?? false) ? 'error' : ''; ?>">
         </div>
 
-        <!-- ===== 2. ПОЛЕ "Телефон" ===== -->
+        <!-- ПОЛЕ "Телефон" -->
         <div class="form-group">
             <label class="required">Телефон</label>
             <input type="tel" name="phone" 
@@ -47,7 +51,7 @@
                    class="<?php echo ($errors['phone'] ?? false) ? 'error' : ''; ?>">
         </div>
 
-        <!-- ===== 3. ПОЛЕ "Email" ===== -->
+        <!-- ПОЛЕ "Email" -->
         <div class="form-group">
             <label class="required">Email</label>
             <input type="email" name="email" 
@@ -55,7 +59,7 @@
                    class="<?php echo ($errors['email'] ?? false) ? 'error' : ''; ?>">
         </div>
 
-        <!-- ===== 4. ПОЛЕ "Дата рождения" ===== -->
+        <!-- ПОЛЕ "Дата рождения" -->
         <div class="form-group">
             <label class="required">Дата рождения</label>
             <input type="date" name="birthdate" 
@@ -63,7 +67,7 @@
                    class="<?php echo ($errors['birthdate'] ?? false) ? 'error' : ''; ?>">
         </div>
 
-        <!-- ===== 5. ПОЛЕ "Пол" (радиокнопки) ===== -->
+        <!-- ПОЛЕ "Пол" (радиокнопки) -->
         <div class="form-group">
             <label class="required">Пол</label>
             <div class="radio-group">
@@ -83,12 +87,13 @@
             <?php endif; ?>
         </div>
 
-        <!-- ===== 6. ПОЛЕ "Любимый язык" ===== -->
+        <!-- ПОЛЕ "Любимый язык программирования" (множественный выбор) -->
         <div class="form-group">
             <label class="required">Любимый язык программирования</label>
             <select name="langs[]" multiple size="6" 
                     class="<?php echo ($errors['langs'] ?? false) ? 'error' : ''; ?>">
                 <?php 
+                // Список всех языков и их отображаемых названий
                 $lang_list = ['pascal', 'c', 'c++', 'javascript', 'php', 'python', 
                               'java', 'haskell', 'clojure', 'prolog', 'scala', 'go'];
                 $lang_display = [
@@ -109,7 +114,7 @@
             <small>Зажмите Ctrl (Cmd) для выбора нескольких</small>
         </div>
 
-        <!-- ===== 7. ПОЛЕ "Биография" ===== -->
+        <!-- ПОЛЕ "Биография" (многострочное) -->
         <div class="form-group">
             <label>Биография</label>
             <textarea name="bio" rows="5" 
@@ -118,7 +123,7 @@
             ?></textarea>
         </div>
 
-        <!-- ===== 8. ЧЕКБОКС ===== -->
+        <!-- ЧЕКБОКС "Согласие с контрактом" -->
         <div class="form-group checkbox-group">
             <label>
                 <input type="checkbox" name="contract" 
@@ -130,6 +135,7 @@
             <?php endif; ?>
         </div>
 
+        <!-- КНОПКА ОТПРАВКИ -->
         <button type="submit">Сохранить</button>
         
     </form>
